@@ -64,6 +64,10 @@ func translate(from, to, text string) (string, string, error) {
 	q := u.Query()
 	q.Set("q", text)
 	q.Set("langpair", from+"|"+to)
+	// Skip MyMemory's public translation memory: it returns junk for common
+	// phrases (wrong language, unrelated text). Machine translation only.
+	q.Set("mt", "1")
+	q.Set("onlyprivate", "1")
 	u.RawQuery = q.Encode()
 
 	client := http.Client{Timeout: 10 * time.Second}

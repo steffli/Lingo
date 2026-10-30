@@ -46,3 +46,20 @@ func TestTranslateEndpoint(t *testing.T) {
 		})
 	}
 }
+
+func TestTranslateSkipsPublicMemory(t *testing.T) {
+	fake := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		q := r.URL.Query()
+		if q.Get("mt") != "1" || q.Get("onlyprivate") != "1" {
+			t.Errorf("mt = %q, onlyprivate = %q, want both 1", q.Get("mt"), q.Get("onlyprivate"))
+		}
+		w.Write([]byte(`{"responseData":{"translatedText":"Hello, how are you today?"},"responseStatus":200}`))
+	}))
+	defer fake.Close()
+	upstream = fake.URL
+	defer func() { upstream = "https://api.mymemory.translated.net/get" }()
+
+	if _, _, err := translate("de-DE", "en-GB", "Hallo, wie geht es dir heute?"); err != nil {
+		t.Fatal(err)
+	}
+}
