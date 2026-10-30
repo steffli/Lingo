@@ -92,4 +92,5 @@ Errors on `/api/translate`:
 
 - Input is capped at 500 bytes per request, which is a MyMemory limit.
 - The anonymous MyMemory quota is roughly 5,000 characters per day. Once it is used up, translations will fail until it resets. Adding an API key or switching providers is the fix if this becomes a problem.
-- Translation quality is whatever MyMemory returns; this app does no post-processing.
+- Only MyMemory's machine translation is used (`mt=1&onlyprivate=1`). Its public translation memory is skipped because it returns junk for common phrases, such as the wrong language or unrelated text. Good human translations from that memory are skipped too.
+- Translation quality is whatever MyMemory's machine translation returns; this app does no post-processing.
